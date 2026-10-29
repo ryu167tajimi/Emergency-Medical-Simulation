@@ -146,9 +146,10 @@ body.start-only .start-mascot,body.start-only .aide-mascot,body.start-only .aide
 #dictionary button{pointer-events:auto!important}
 body.start-only #start{z-index:30000!important}
 .choice-buttons{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0}.choice-pill{width:auto!important;min-height:38px!important;padding:8px 13px!important;border-radius:999px!important;background:#fff!important;color:#19314a!important;border:1px solid #8ca5bb!important;font-size:15px!important}.choice-pill.chosen{background:#1769aa!important;color:white!important;border-color:#1769aa!important}.choice-selected{display:flex;flex-wrap:wrap;gap:6px;min-height:32px;padding:6px 0}.selected-pill{padding:5px 10px;border-radius:9px;background:#dbeafe;color:#163e70;font-weight:700}.choice-history{font-size:12px;color:#586b7c}.gcs-parts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.gcs-parts select{width:100%}@media(max-width:650px){.gcs-parts{grid-template-columns:1fr}}.bp-pair,.pupil-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}.pupil-pair>div{display:grid;gap:7px}@media(max-width:450px){.bp-pair{grid-template-columns:1fr 1fr}}</style>
+<style id="ems-brief-style">.ems-brief-head{font-weight:800;font-size:17px;padding:10px 2px}.ems-brief-head small{display:block;font-size:12px;color:#52657a;font-weight:500}.ems-brief-card{background:#fff;border:1px solid #ccd9e7;border-radius:12px;padding:12px;margin:9px 0;color:#172d42}.ems-brief-card h3{margin:0 0 9px;font-size:17px;color:#153e69}.ems-line{font-size:14px;line-height:1.6;padding:4px 0;overflow-wrap:anywhere}.ems-brief-alert{border-left:5px solid #c93636;background:#fff7f6}.ems-brief-alert h3{color:#a52020}.ems-captain{background:#f2f7fc}.ems-note{font-size:12px;color:#7b4b13;background:#fff7df;padding:8px;border-radius:8px;margin-top:8px}.ems-source{font-size:12px;color:#53687c;margin:10px 0}.ems-source summary{cursor:pointer}.ems-source a{color:#1464a2}</style>
 </head>
 <body class="start-only"><button id="aideBack" class="aide-back" onclick="goBackScreen()">← 戻る</button>
-<header><b>TAJIMI EMS AIDE</b><div class="sub">詳細入力・活動フロー版 Ver.20.2</div></header>
+<header><b>TAJIMI EMS AIDE</b><div class="sub">詳細入力・活動フロー版 Ver.20.4</div></header>
 <div class="wrap">
 <section id="start" class="screen active"><div class="card start-card-only">
 <h1 class="start-main-heading">救急活動支援</h1>
@@ -196,7 +197,7 @@ body.start-only #start{z-index:30000!important}
 <div><label>呼吸音</label><select id="respObs" onchange="toggleOtherChoice(this)"><option value="">未確認</option><option>正常</option><option>喘鳴</option><option>湿性ラ音</option><option>乾性ラ音</option><option>呼吸音減弱</option><option>呼吸音消失</option><option>左右差あり</option><option>その他</option></select><input id="respObs_other" placeholder="その他・補足を入力" style="display:none;margin-top:6px" oninput="syncOtherChoice(this)"></div>
 <div><label>脈拍 / HR</label><input id="hr" inputmode="numeric"></div><div><label>SpO₂</label><input id="spo2" inputmode="numeric"></div>
 <div><label>血圧（mmHg）</label><div class="bp-pair"><input id="bpSys" type="number" inputmode="numeric" placeholder="上（収縮期）" oninput="syncBP()"><input id="bpDia" type="number" inputmode="numeric" placeholder="下（拡張期）" oninput="syncBP()"></div><input id="bp" type="hidden"></div><div><label>呼吸数</label><input id="rr" inputmode="numeric"></div>
-<div><label>体温</label><input id="temp" inputmode="decimal"></div><div><label>血糖</label><input id="glucose" inputmode="numeric"></div>
+<div><label>体温</label><input id="temp" inputmode="decimal"></div><div><label>血糖</label><input id="glucose" inputmode="numeric" oninput="renderBrief()"></div>
 <div><label>皮膚所見（複数選択）</label><div class="choice-buttons" id="skinChoices"><button type="button" class="choice-pill" onclick="toggleSkin(this)">正常</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">蒼白</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">冷汗</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">湿潤</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">乾燥</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">チアノーゼ</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">紅潮</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">発疹</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">蕁麻疹</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">その他</button></div><div id="skinSelected" class="choice-selected">未選択</div><input id="skinOther" placeholder="その他の皮膚所見" oninput="syncSkin()" style="display:none"><input type="hidden" id="skin"></div><div><label>瞳孔・対光反射</label><div class="pupil-pair"><div><b>右</b><select id="pupilRSize" onchange="syncPupil()"><option value="">径 未確認</option><option value="1">1 mm</option><option value="2">2 mm</option><option value="3">3 mm</option><option value="4">4 mm</option><option value="5">5 mm</option></select><select id="pupilRLight" onchange="syncPupil()"><option value="">対光反射 未確認</option><option value="+">＋</option><option value="-">－</option></select></div><div><b>左</b><select id="pupilLSize" onchange="syncPupil()"><option value="">径 未確認</option><option value="1">1 mm</option><option value="2">2 mm</option><option value="3">3 mm</option><option value="4">4 mm</option><option value="5">5 mm</option></select><select id="pupilLLight" onchange="syncPupil()"><option value="">対光反射 未確認</option><option value="+">＋</option><option value="-">－</option></select></div></div><div id="pupilSelected" class="info">右・左：未確認</div><input id="pupil" type="hidden"></div>
 </div>
 <button class="primary" onclick="evaluateField()">入力内容から隊長支援を更新</button>
@@ -387,34 +388,88 @@ function getGPSLocation(){
 function txt(){return (state.support+" "+document.getElementById("interviewFree")?.value||"").toLowerCase()}
 function flags(t){return {chest:/胸痛|胸が痛|胸部痛|圧迫感/.test(t)&&!/胸痛なし/.test(t),neuro:/麻痺|脱力|ろれつ|構音|顔.*ゆが|片側/.test(t),resp:/呼吸苦|息苦|喘鳴|wheeze|呼吸困難/.test(t),shock:/冷汗|蒼白|ショック|血圧.*低/.test(t),allergy:/蕁麻疹|じんましん|アナフィ|食後.*発疹/.test(t),trauma:/転倒|転落|交通|外傷|出血/.test(t),burn:/熱傷|やけど/.test(t)}}
 function saveSupport(){state.support=document.getElementById("supportText").value+" "+document.getElementById("supportExtra").value;renderBrief();go("brief")}
+// 内蔵プロトコール照合データ：公式本文の全文検索ではなく、確認事項を抽出するローカルルール。
+// 医療行為の可否を自動決定しない。正式な適応・禁忌・例外は最新版原文とMC指示で確認。
+const EMS_PROTOCOL_META={version:"岐阜県救急隊プロトコール（運用版を所属で確認）",source:"https://www.pref.gifu.lg.jp/uploaded/attachment/515625.pdf"};
+const EMS_BRIEF_RULES=[
+ {id:"chest",re:/胸痛|胸部痛|胸が痛|胸の痛|胸部圧迫|胸.*締め付け|心筋梗塞|狭心症/,
+  suspect:"急性冠症候群",critical:"急性大動脈解離・肺血栓塞栓症・緊張性気胸",observe:"ABC・意識・血圧・SpO₂・心電図・ショック徴候",action:"安静・心電図モニター・AED準備・早期搬送判断",ask:"発症時刻・突然発症・胸背部痛・放散・失神・服薬",report:"突然の激痛・失神・血圧低下・状態悪化",
+  protocol:["胸痛と冷汗だけで心原性ショックとは確定しない。血圧・末梢循環・意識などを確認。","心停止前の静脈路確保・輸液を検討する際は、心原性ショックが強く疑われる場合の対象除外規定を確認。","輸液の適応、実施資格、医師の具体的指示の要否を確認。"],restricted:["心原性ショックを強く疑う場合：心停止前輸液の対象外となる条件に注意。","ショック徴候があるだけで輸液を自動決定しない。"],level:"要現場確認"},
+ {id:"arrest",re:/心肺停止|心停止|CPA|心室細動|\bVF\b|無脈性心室頻拍|\bpVT\b/i,
+  suspect:"心停止・ショック適応波形の可能性",critical:"可逆的原因・心停止の鑑別",observe:"反応・呼吸・脈拍（所定手順）・心電図波形",action:"胸骨圧迫・AED/除細動器・蘇生体制を準備",ask:"目撃・最終健常時刻・バイスタンダーCPR・AED実施",report:"波形・除細動回数・投薬時刻・状態変化",
+  protocol:["除細動の包括的実施回数、オンライン指示が必要になる時点を累計で確認。","薬剤投与によって除細動回数をリセットしない。例外規定の適用は原文と医師指示で確認。"],restricted:["包括的指示の上限を超える除細動は、医師指示の要否を必ず確認。"],level:"要現場確認"},
+ {id:"neuro",re:/麻痺|ろれつ|構音|顔面.*ゆが|片側.*脱力|脳卒中|意識障害|意識がない|意識低下/,
+  suspect:"脳卒中・意識障害",critical:"低血糖・けいれん後・気道障害",observe:"ABC・JCS/GCS・CPSS・瞳孔・血糖測定の適応",action:"気道管理・酸素適応判断・迅速搬送検討",ask:"最終健常時刻・発症様式・糖尿病・服薬・けいれん",report:"最終健常時刻・神経所見の左右差・意識変化",
+  protocol:["血糖測定・低血糖への処置は、対象条件と実施資格・医師指示を確認。","脳卒中疑いでも低血糖等の鑑別を省略しない。"],restricted:["血糖値未確認の段階で低血糖と断定しない。"],level:"要現場確認"},
+ {id:"resp",re:/呼吸困難|呼吸苦|息苦|喘鳴|呼吸が苦しい|息ができない/,
+  suspect:"呼吸不全・心不全・喘息等",critical:"気道閉塞・緊張性気胸・肺血栓塞栓症",observe:"ABC・呼吸数・努力呼吸・SpO₂・呼吸音",action:"気道管理・酸素適応判断・搬送準備",ask:"発症時刻・誘因・喘息/心疾患・服薬・胸痛",report:"会話困難・チアノーゼ・意識低下",
+  protocol:["酸素投与・気道確保などは所見と適応条件に従う。","呼吸状態悪化時は気道・換気の優先順位を再評価。"],restricted:["SpO₂の数値だけで病態や処置を決めない。"],level:"要現場確認"},
+ {id:"allergy",re:/アナフィラキシ|じんましん|蕁麻疹|アレルギー.*呼吸|蜂.*刺/,
+  suspect:"アナフィラキシー",critical:"気道浮腫・呼吸循環不全",observe:"ABC・皮膚粘膜・喘鳴・血圧",action:"気道管理・酸素適応判断・迅速搬送",ask:"原因物質・曝露時刻・症状の進行・既往",report:"嗄声・喘鳴・血圧低下・急激な悪化",
+  protocol:["アナフィラキシー関連処置の適応・実施資格・医師指示の要否を確認。"],restricted:["症状や適応を確認せず薬剤処置を決定しない。"],level:"要現場確認"},
+ {id:"trauma",re:/交通事故|転落|転倒|外傷|大量出血|刺創|挟まれ/,
+  suspect:"重症外傷・出血",critical:"内出血・頭蓋内損傷・緊張性気胸",observe:"ABC・出血・受傷機転・意識・循環",action:"安全確保・止血・全身観察・早期搬送",ask:"受傷時刻・機転・抗凝固薬・意識消失",report:"活動性出血・ショック・意識悪化",
+  protocol:["外傷に関する処置の適応、禁忌、実施条件を確認。"],restricted:["重症度や出血源が未確認の段階で単一病態に固定しない。"],level:"要現場確認"}
+];
+// 血糖は「主病態」「鑑別（除外すべき病態）」「測定値」のどの経路でも評価する。
+// 「除外診断」は陰性確認を意味しない。適応と禁忌は原文・MCで最終照合する。
+const EMS_GLUCOSE_RULE={
+ name:"意識障害に対する血糖測定・低血糖への対応",
+ triggers:/低血糖|血糖|糖尿病|インスリン|血糖降下|意識障害|意識低下|意識がない|反応がない|意識消失|意識不明|けいれん|痙攣|脳卒中|脳梗塞|脳出血|片麻痺|片側.*脱力|ろれつ|構音|顔面.*ゆが|冷汗|ふらつき|異常行動/,
+ observe:"意識レベル（JCS/GCS）・ABC・血糖測定の適応・神経所見",
+ ask:"糖尿病歴・インスリン/血糖降下薬・最終食事・発症時刻・けいれん",
+ protocol:["低血糖が主病態でなく脳卒中等の鑑別候補でも、血糖測定の適応を確認する。","血糖測定・ブドウ糖投与は別々に適応を判定する。意識状態・血糖値・年齢・実施資格・医師の具体的指示等を確認する。","低血糖が確認されても、他の重篤疾患の併存や神経症状の持続を再評価する。"],
+ restricted:["支援情報や症状だけで低血糖と確定せず、測定値未確認のままブドウ糖投与を決定しない。","穿刺が不適切な病態の疑い、実施条件、搬送遅延などの制限を確認する。"]
+};
+function glucoseContext(raw){
+ const el=document.getElementById("glucose"),v=el?Number(el.value):NaN;
+ const measured=!!(el&&el.value.trim()!==""&&Number.isFinite(v));
+ const suspect=EMS_GLUCOSE_RULE.triggers.test(raw);
+ const low=measured&&v<70;
+ return {active:suspect||low,measured,value:v,low};
+}
+function briefLine(label,value){return `<div class="ems-line"><b>${label}</b> ${value}</div>`}
 function renderBrief(){
- let t=normalizeEMS(state.support),f=flags(t),blocks=[];
- function add(name,why,suspect,exclude){
-  blocks.push(`<div class="card" style="box-shadow:none;border-left:5px solid #278bd2"><b>⚠️ ${name}</b><br><span class="muted">${why}</span>
-  <h3>疑うための重要観察</h3>${suspect.map(x=>`<div class="info">${x}</div>`).join("")}
-  <h3>除外・重症度判断の重要観察</h3>${exclude.map(x=>`<div class="danger">${x}</div>`).join("")}</div>`);
+ const raw=normalizeEMS([state.support||"",document.getElementById("interviewFree")?.value||"",Object.values(state.answers||{}).join(" ")].join(" "));
+ const active=EMS_BRIEF_RULES.filter(r=>r.re.test(raw));
+ const sugar=glucoseContext(raw);
+ const hasShock=/ショック|血圧低下|低血圧|冷汗|蒼白/.test(raw);
+ const uniq=(xs)=>[...new Set(xs.filter(Boolean))];
+ const merged=(k,defaultText)=>active.length?uniq(active.map(r=>r[k])).join("／"):defaultText;
+ const proto=uniq(active.flatMap(r=>r.protocol).concat(sugar.active?EMS_GLUCOSE_RULE.protocol:[]));
+ const restrictions=uniq(active.flatMap(r=>r.restricted).concat(sugar.active?EMS_GLUCOSE_RULE.restricted:[]));
+ if(hasShock && !active.some(r=>r.id==="chest")){
+   proto.unshift("ショック徴候が疑われる。循環評価を行い、輸液等の適応・除外条件・医師指示の要否を確認。");
+   restrictions.unshift("冷汗・蒼白のみでショックの原因や輸液適応を断定しない。");
  }
- if(f.chest)add("急性冠症候群・その他の致死的胸痛","支援情報に胸痛関連語あり",
- ["発症時刻・突然/徐々・持続","部位、性状、放散、冷汗・悪心","12誘導心電図、血圧、SpO₂、循環"],
- ["ショック・致死性不整脈","大動脈疾患を示唆する突然の激痛/左右差等","呼吸困難・低酸素など他の致死的原因"]);
- if(f.neuro)add("脳卒中・神経学的緊急症","麻痺/構音等の支援情報あり",
- ["最終健常時刻","顔面・上肢・言語","意識、瞳孔、神経所見の左右差"],
- ["低血糖などstroke mimic","痙攣後、外傷、薬剤等の代替原因","急速な意識/ABC悪化"]);
- if(f.resp)add("重症呼吸器・循環器病態","呼吸困難関連情報あり",
- ["呼吸仕事量、会話、呼吸数","呼吸音・左右差","SpO₂、循環、発症様式"],
- ["気道閉塞、重症喘息等","心不全・肺循環系の重篤病態","アナフィラキシー、ショック"]);
- if(f.allergy)add("アナフィラキシー","皮膚症状/誘因等の情報あり",
- ["誘因と発症時間","皮膚・粘膜","喘鳴/呼吸困難、血圧/循環"],
- ["気道・呼吸・循環障害","他のショック原因"]);
- if(f.trauma)add("重症外傷・出血性ショック","外傷機転情報あり",
- ["受傷機転","活動性出血","頭頸部・胸腹部・骨盤・四肢・背面"],
- ["内出血・ショック","頭蓋内損傷","緊張性気胸等の致命的胸部損傷"]);
- if(f.burn)add("熱傷・気道熱傷","熱傷関連情報あり",
- ["熱源・温度・接触時間","部位・深度・II度以上面積","顔面/頸部/口腔・嗄声等"],
- ["気道熱傷","広範囲熱傷・循環障害","低体温"]);
- if(!blocks.length)blocks.push(`<div class="warn"><b>病態はまだ固定しません。</b><br>接触時の第一印象とABCを優先し、主訴・発症状況・危険所見から鑑別を更新します。未確認を正常とは扱いません。</div>`);
- document.getElementById("briefing").innerHTML=blocks.join("");
-}function saveBrief(){renderQuestions();go("field")}
+ if(sugar.active){
+   proto.unshift(sugar.measured?`血糖測定値 ${sugar.value} mg/dL：数値と意識・全身所見を合わせ、プロトコールの適応を確認。`:"血糖値は未確認。適応を満たす場合は血糖測定を検討（鑑別候補でも同様）。");
+ }
+ const generic="現場接触時の第一印象・ABCを優先。未確認は正常と扱わない。";
+ const renderRows=xs=>xs.map(x=>`<div class="ems-line">・${x}</div>`).join("");
+ document.getElementById("briefing").innerHTML=`
+ <div class="ems-brief-head">📋 支援情報からの事前共有 <small>病態・処置は未確定</small></div>
+ <div class="ems-brief-card"><h3>🚑 ① 全隊員への周知</h3>
+ ${briefLine("疑い：",merged("suspect","支援情報からは未特定"))}
+ ${briefLine("見逃し注意：",merged("critical","気道・呼吸・循環の異常")+(sugar.active?"／低血糖（鑑別）":""))}
+ ${briefLine("優先観察：",merged("observe","ABC・意識・呼吸・循環")+(sugar.active?"／"+EMS_GLUCOSE_RULE.observe:""))}
+ ${briefLine("優先活動：",merged("action",generic))}</div>
+ <div class="ems-brief-card"><h3>💉 ② 救命士への周知</h3>
+ <div class="ems-line"><b>関連プロトコール：</b> ${active.length?(active.map(r=>({chest:"胸痛・ショック関連",arrest:"心停止・除細動",neuro:"意識障害・血糖",resp:"呼吸管理",allergy:"アナフィラキシー",trauma:"外傷"})[r.id]).concat(sugar.active?["意識障害・低血糖（鑑別含む）"]:[])).join("／"):(sugar.active?"意識障害・低血糖（鑑別含む）":"該当情報なし（現場評価で再確認）")}</div>
+ ${proto.length?renderRows(proto):`<div class="ems-line">${generic}</div>`}
+ <div class="ems-note">※低血糖は主病態・鑑別の両方で照合。適応・禁忌・実施資格・医師指示は最新版の原文で最終確認。自動判定で処置を許可しません。</div></div>
+ <div class="ems-brief-card"><h3>🗣️ ③ 聴取担当への周知</h3>
+ ${briefLine("基本：","何をしていて／いつから／どうなった／初発か／病気は")}
+ ${briefLine("追加：",merged("ask","発症時刻・既往・服薬・アレルギー")+(sugar.active?"／"+EMS_GLUCOSE_RULE.ask:""))}
+ ${briefLine("即時報告：",merged("report","意識・呼吸・循環の悪化"))}</div>
+ <div class="ems-brief-card ems-brief-alert"><h3>🚫 ④ 全員共通｜禁忌・制限</h3>
+ ${restrictions.length?renderRows(restrictions):"<div class='ems-line'>支援情報から特定の禁忌は抽出されていません。禁忌がないという意味ではありません。</div>"}
+ </div>
+ <div class="ems-brief-card ems-captain"><h3>⭐ 隊長への活動ポイント</h3>
+ <div class="ems-line">${active.length?"観察・処置準備と聴取を分担し、危険所見は即時共有。":"ABC優先、病態を固定せず情報を更新。"}</div></div>
+ <details class="ems-source"><summary>参照情報・利用上の注意</summary><div>岐阜県救急隊プロトコールの確認ポイントをローカルルールとして内蔵。原文全文のAI検索ではありません。改訂版・地域MCの指示・個別症例の判断を優先します。<a href="${EMS_PROTOCOL_META.source}" target="_blank" rel="noopener noreferrer">原文PDFを確認</a></div></details>`;
+}
+function saveBrief(){renderQuestions();go("field")}
 const qs=[
 ["activity","何をしていた時ですか？"],["onset","いつからですか？"],["change","どうなりましたか？"],
 ["first","今回が初発ですか？"],["past","過去に同じ症状はありますか？"],["pastWhen","過去歴がある場合、前回はいつですか？"],
@@ -476,7 +531,7 @@ function toggleOtherChoice(el){const e=document.getElementById(el.id+'_other');i
 function syncOtherChoice(el){const select=document.getElementById(el.id.replace('_other',''));if(select&&el.value.trim())select.dataset.detail=el.value.trim()}
 
 function ans(k,v){state.answers[k]=v;state.history.push({k,v,at:new Date().toISOString()});updateSupport()}
-function updateSupport(){let f=flags(normalizeEMS(state.support+' '+(document.getElementById('interviewFree')?.value||'')+' '+Object.values(state.answers).join(' '))),extra=[];
+function updateSupport(){renderBrief();let f=flags(normalizeEMS(state.support+' '+(document.getElementById('interviewFree')?.value||'')+' '+Object.values(state.answers).join(' '))),extra=[];
 if(f.chest)extra.push("胸痛の性状・部位・放散・随伴症状を追加聴取");
 if(f.neuro)extra.push("最終健常時刻、顔面・上肢・言語の変化を追加確認");
 if(f.resp)extra.push("発症様式、呼吸苦の増悪、喘鳴・呼吸音を確認");
