@@ -149,7 +149,7 @@ body.start-only #start{z-index:30000!important}
 <style id="ems-brief-style">.ems-brief-head{font-weight:800;font-size:17px;padding:10px 2px}.ems-brief-head small{display:block;font-size:12px;color:#52657a;font-weight:500}.ems-brief-card{background:#fff;border:1px solid #ccd9e7;border-radius:12px;padding:12px;margin:9px 0;color:#172d42}.ems-brief-card h3{margin:0 0 9px;font-size:17px;color:#153e69}.ems-line{font-size:14px;line-height:1.6;padding:4px 0;overflow-wrap:anywhere}.ems-brief-alert{border-left:5px solid #c93636;background:#fff7f6}.ems-brief-alert h3{color:#a52020}.ems-captain{background:#f2f7fc}.ems-note{font-size:12px;color:#7b4b13;background:#fff7df;padding:8px;border-radius:8px;margin-top:8px}.ems-source{font-size:12px;color:#53687c;margin:10px 0}.ems-source summary{cursor:pointer}.ems-source a{color:#1464a2}</style>
 </head>
 <body class="start-only"><button id="aideBack" class="aide-back" onclick="goBackScreen()">← 戻る</button>
-<header><b>TAJIMI EMS AIDE</b><div class="sub">詳細入力・活動フロー版 Ver.20.4</div></header>
+<header><b>TAJIMI EMS AIDE</b><div class="sub">詳細入力・活動フロー版 Ver.20.5</div></header>
 <div class="wrap">
 <section id="start" class="screen active"><div class="card start-card-only">
 <h1 class="start-main-heading">救急活動支援</h1>
@@ -702,6 +702,35 @@ function refreshTransport(){recordTransportVitals()}
 <h2>⑧ 搬送・病院連絡支援</h2>
 <div class="info"><b>🚑 最終支援</b><br>最新の確認済み情報を優先して、搬送中の再評価・病院連絡・申し送りを整理します。</div>
 <div id="finalClinicalSummary"></div>
+<div class="card" id="hospitalDecisionV205" style="border:2px solid #0b7795">
+<h2>🏥 病態別・搬送先自動提案 Ver.20.5</h2>
+<div class="info">病態と重症度を優先し、対応可能と確認した病院から搬送先候補を提案します。複数傷病者にも対応。<b>受入可否・診療能力は自動取得しません。</b>必ず病院に確認してください。</div>
+<div class="grid"><div><label>現場所在地（任意）</label><input id="h205Origin" placeholder="例：多治見市笠原町"></div><div><label>現在地取得（任意）</label><button type="button" onclick="h205GPS()">📍 GPS取得</button><div id="h205GpsMsg" class="muted"></div></div></div>
+<h3>傷病者ごとの病態・重症度</h3><div id="h205Patients"></div>
+<button type="button" onclick="h205Add()">＋ 傷病者を追加</button>
+<h3>病院の対応可否・所要時間（現場確認情報）</h3>
+<div class="info">「対応可能」は<b>隊員が確認した場合のみ</b>チェック。時間は地図・指令情報等で確認して入力してください。未確認病院は自動選定から除外します。</div>
+<div id="h205Hospitals"></div>
+<button type="button" onclick="h205Rank()" style="background:#086d82;color:white">🏥 搬送先候補を自動提案</button>
+<div id="h205Results" aria-live="polite"></div>
+<h3>🚁 ドクターヘリ検討</h3><div class="info">重症・時間依存性疾患では運航時間・天候・適応・RDP・医師接触までの時間を確認。昼間でも運航可能とは限りません。ヘリ要請は指令・運航調整先との確認が必要です。</div>
+</div>
+<script>
+(function(){
+const names=['県立多治見病院','多治見市民病院','東濃中部医療センター','中部国際医療センター','東可児病院','藤掛病院','名古屋徳洲会総合病院','とうせい病院'];
+const types=[['cardiac','胸痛・循環器'],['stroke','脳卒中疑い'],['trauma','重症外傷'],['neuro','意識障害・けいれん'],['resp','呼吸不全'],['general','その他']];
+const sev=[['critical','重症'],['moderate','中等症'],['mild','軽症']];
+let count=0,coords=null;
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+window.h205Add=function(){count++;let id=count;let div=document.createElement('div');div.className='info';div.style.marginBottom='8px';div.innerHTML='<b>傷病者 '+id+'</b><div class="grid"><div><label>病態</label><select class="h205type">'+types.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('')+'</select></div><div><label>重症度</label><select class="h205severity">'+sev.map(x=>'<option value="'+x[0]+'">'+x[1]+'</option>').join('')+'</select></div></div><label>連絡に必要な所見・処置</label><input class="h205notes" placeholder="発症時刻、意識、バイタル、処置など"><button type="button" class="secondary" onclick="this.parentNode.remove()">この傷病者を削除</button>';document.getElementById('h205Patients').appendChild(div)};
+window.h205GPS=function(){let m=document.getElementById('h205GpsMsg');if(!navigator.geolocation){m.textContent='GPS非対応です';return}m.textContent='位置情報の許可待ち';navigator.geolocation.getCurrentPosition(p=>{coords={lat:p.coords.latitude,lng:p.coords.longitude};m.textContent='位置情報取得済み（経路時間は別途確認）'},()=>m.textContent='位置情報を取得できません。住所を入力してください。',{enableHighAccuracy:true,timeout:10000})};
+function renderHospitals(){let root=document.getElementById('h205Hospitals');root.innerHTML=names.map((n,i)=>'<div class="info" style="margin:6px 0"><b>'+esc(n)+'</b><div class="grid"><div><label>確認済みの対応病態（複数可）</label><div>'+types.map(t=>'<label style="display:inline-block;margin:4px"><input type="checkbox" class="h205cap" data-type="'+t[0]+'" data-h="'+i+'">'+t[1]+'</label>').join('')+'</div></div><div><label>確認済み所要時間（分）</label><input type="number" class="h205min" data-h="'+i+'" min="1" max="360" placeholder="未確認"><label>受入状況</label><select class="h205accept" data-h="'+i+'"><option value="unknown">未確認</option><option value="yes">受入可能と確認</option><option value="no">受入不可</option></select><label>受入可能人数（確認済み）</label><input type="number" class="h205capacity" data-h="'+i+'" min="1" max="30" placeholder="未確認"></div></div></div>').join('')}
+window.h205Rank=function(){let root=document.getElementById('h205Results');let pats=[...document.querySelectorAll('#h205Patients>.info')].map((e,i)=>({i:i+1,type:e.querySelector('.h205type').value,severity:e.querySelector('.h205severity').value,notes:e.querySelector('.h205notes').value}));if(!pats.length){root.textContent='傷病者を追加してください';return}let hospitals=names.map((n,i)=>{let q=s=>document.querySelector(s+'[data-h="'+i+'"]');return{name:n,caps:[...document.querySelectorAll('.h205cap[data-h="'+i+'"]:checked')].map(x=>x.dataset.type),minutes:Number(q('.h205min').value),accepted:q('.h205accept').value,capacity:Number(q('.h205capacity').value)}});let used={};let order={critical:0,moderate:1,mild:2};let results=[];pats.sort((a,b)=>order[a.severity]-order[b.severity]).forEach(p=>{let matches=hospitals.filter(h=>h.accepted==='yes'&&h.caps.includes(p.type)&&h.minutes>0&&h.capacity>0&&(used[h.name]||0)<h.capacity).sort((a,b)=>a.minutes-b.minutes);let chosen=matches[0];if(chosen)used[chosen.name]=(used[chosen.name]||0)+1;results.push({p,chosen,alternates:matches.slice(1,3)})});root.innerHTML='<h3>自動提案結果（確認済み条件に限定）</h3>'+results.map(r=>'<div class="info"><b>傷病者 '+r.p.i+'：'+esc(types.find(x=>x[0]===r.p.type)[1])+'／'+esc(sev.find(x=>x[0]===r.p.severity)[1])+'</b><p>'+(r.chosen?'第1候補：<b>'+esc(r.chosen.name)+'</b>（入力所要時間 '+r.chosen.minutes+'分）':'<b>候補未確定</b>：対応可否・受入・人数・所要時間を確認してください')+'</p>'+(r.alternates.length?'代替：'+r.alternates.map(x=>esc(x.name)+'（'+x.minutes+'分）').join('、'):'')+'<div><button type="button" onclick="h205Copy('+r.p.i+')">☎️ 病院連絡文をコピー</button></div></div>').join('')+'<p class="muted">病態に適合する受入確認済み病院の中で、入力所要時間が短い順に提案。重症者から割当。未確認情報は選定に使用しません。医療機関の機能・対応状況は必ず再確認してください。</p>';window.h205Last=results};
+window.h205Copy=function(id){let r=(window.h205Last||[]).find(x=>x.p.i===id);if(!r)return;let t='救急隊から受入照会です。傷病者'+id+'、病態：'+types.find(x=>x[0]===r.p.type)[1]+'、重症度：'+sev.find(x=>x[0]===r.p.severity)[1]+'。所見・処置：'+(r.p.notes||'未入力')+'。搬送先候補：'+(r.chosen?r.chosen.name:'未確定')+'。受入可否をご確認ください。';if(navigator.clipboard?.writeText)navigator.clipboard.writeText(t).then(()=>alert('病院連絡文をコピーしました')).catch(()=>prompt('コピーしてください',t));else prompt('コピーしてください',t)};
+renderHospitals();window.h205Add();
+})();
+</script>
+
 <h3>病院連絡チェック</h3>
 <div class="info">主訴／発症・経過／意識／最新バイタル／重要所見／実施処置／処置後変化／未確認事項を確認してください。</div>
 <button onclick="buildFinalSummary()">最新情報で更新</button>
