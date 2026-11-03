@@ -153,7 +153,7 @@ body.start-only #start{z-index:30000!important}
 .a209-panel{border:1px solid #3e79a3;border-radius:12px;padding:12px;margin:12px 0;background:rgba(18,85,130,.09)}.a209-panel h3{margin:4px 0 9px}.a209-panel label{display:block;margin:7px 0 3px}.a209-panel input,.a209-panel select{width:100%;max-width:100%;box-sizing:border-box;padding:9px}.a209-hosp{padding:10px;border:1px solid #8198a8;border-radius:10px;margin:9px 0}.a209-small{font-size:12px;opacity:.85;line-height:1.5}.a209-warn{border-left:4px solid #d77d39;padding:8px;margin:7px 0;background:rgba(225,135,42,.1)}.a209-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.a209-actions button{flex:1;min-width:130px}
 </style><style>.conscious-alert{background:#fee2e2!important;color:#991b1b!important;border:2px solid #dc2626!important;border-radius:10px;padding:12px;font-weight:800;margin-top:8px}.a211-hint{font-size:12px;color:#475569;margin-top:5px}.a211-hint.estimated{background:#fff7ed;border-left:3px solid #f59e0b;padding:7px;color:#92400e}</style><style id="aide-version-corner-style">header{padding-right:110px!important}.aide-version-corner{position:absolute;right:12px;top:12px;display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:999px;border:1px solid rgba(115,206,255,.7);background:rgba(16,84,138,.85);color:#fff;font-size:12px;font-weight:800;white-space:nowrap;letter-spacing:.2px;box-shadow:0 1px 8px #0003}@media(max-width:370px){header b{font-size:16px}.aide-version-corner{right:8px;top:10px;font-size:11px;padding:4px 6px}}</style></head>
 <body class="start-only"><button id="aideBack" class="aide-back" onclick="goBackScreen()">← 戻る</button>
-<header><b>TAJIMI EMS AIDE</b><div class="sub">詳細入力・活動フロー版</div><span class="aide-version-corner" aria-label="アプリバージョン">Ver.20.15</span></header>
+<header><b>TAJIMI EMS AIDE</b><div class="sub">詳細入力・活動フロー版</div><span class="aide-version-corner" aria-label="アプリバージョン">Ver.20.18</span></header>
 <div class="wrap">
 <section id="start" class="screen active"><div class="card start-card-only">
 <h1 class="start-main-heading">救急活動支援</h1>
@@ -166,8 +166,8 @@ body.start-only #start{z-index:30000!important}
 <div class="timeRow"><input id="awareness" type="time"><button class="now" onclick="now('awareness')">現在時刻</button></div><label>覚知時刻</label>
 <div class="timeRow"><input id="departure" type="time"><button class="now" onclick="now('departure')">現在時刻</button></div><label>出場時刻</label>
 <label>場所</label>
-<div class="timeRow"><input id="location" placeholder="出動場所"><button class="now" onclick="getGPSLocation()">GPS取得</button></div>
-<div id="gpsStatus" class="muted">手入力も可能です。</div>
+<div class="timeRow"><input id="location" placeholder="出動場所"><span class="muted" style="font-size:.85em">指令住所（GPSは現場到着後）</span></div>
+<div id="gpsStatus" class="muted">現場到着後にGPSで確認できます。指令住所は保持します。</div>
 <div id="crewRows"></div>
 <div class="muted" style="margin-top:8px">救命士資格表示：救＝救急救命士／ビ＝ビデオ喉頭鏡／気＝気管挿管／薬＝薬剤／新＝新処置</div>
 <button class="primary" onclick="saveCrew()">隊員情報を確定 →</button></div></section>
@@ -182,7 +182,7 @@ body.start-only #start{z-index:30000!important}
 <label>隊長の活動方針・追加指示</label><textarea id="briefPlan"></textarea>
 <button class="primary" onclick="saveBrief()">ブリーフィング終了 →</button></div></section>
 
-<section id="field" class="scene">
+<section id="field" class="scene"><div class="card" id="a218GpsCard" style="border:1px solid #357eaa"><h3>📍 現場到着・現在地確認</h3><p class="muted">指令住所とGPSは別管理。現場到着後に取得し、現場位置として確認してください。</p><button type="button" onclick="a218GPS()">📍 現在地をGPS取得</button><div id="a218GpsStatus" role="status" aria-live="polite" class="muted">GPS未取得（住所による活動は継続可能）</div><label>現場位置（GPS座標または手入力住所）</label><input id="a218SceneLocation" placeholder="GPS取得後に表示／住所を手入力可能"><button type="button" class="secondary" onclick="a218ConfirmLocation()">✓ 現場位置として確定</button><div id="a218LocationConfirmed" class="muted">未確定</div></div>
 <div class="card"><h2>④ 現場活動｜隊長・救命士</h2>
 <div class="timeRow"><input id="contact" type="time"><button class="now" onclick="now('contact')">現在時刻</button></div><label>傷病者接触時刻</label>
 <h3>🔵 隊長｜聴取サポート</h3><div id="captainQuestions"></div>
@@ -202,11 +202,11 @@ body.start-only #start{z-index:30000!important}
 <div><label>脈拍 / HR</label><input id="hr" inputmode="numeric"></div><div><label>SpO₂</label><input id="spo2" inputmode="numeric"></div>
 <div><label>血圧（mmHg）</label><div class="bp-pair"><input id="bpSys" type="number" inputmode="numeric" placeholder="上（収縮期）" oninput="syncBP()"><input id="bpDia" type="number" inputmode="numeric" placeholder="下（拡張期）" oninput="syncBP()"></div><input id="bp" type="hidden"></div><div><label>呼吸数</label><input id="rr" inputmode="numeric"></div>
 <div><label>体温</label><input id="temp" inputmode="decimal"></div><div><label>血糖</label><input id="glucose" inputmode="numeric" oninput="renderBrief()"></div>
-<div><label>皮膚所見（複数選択）</label><div class="choice-buttons" id="skinChoices"><button type="button" class="choice-pill" onclick="toggleSkin(this)">正常</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">蒼白</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">冷汗</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">湿潤</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">乾燥</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">チアノーゼ</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">紅潮</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">発疹</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">蕁麻疹</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">その他</button></div><div id="skinSelected" class="choice-selected">未選択</div><input id="skinOther" placeholder="その他の皮膚所見" oninput="syncSkin()" style="display:none"><input type="hidden" id="skin"></div><div><label>瞳孔・対光反射</label><div class="pupil-pair"><div><b>右</b><select id="pupilRSize" onchange="syncPupil()"><option value="">径 未確認</option><option value="1">1 mm</option><option value="2">2 mm</option><option value="3">3 mm</option><option value="4">4 mm</option><option value="5">5 mm</option></select><select id="pupilRLight" onchange="syncPupil()"><option value="">対光反射 未確認</option><option value="+">＋</option><option value="-">－</option></select></div><div><b>左</b><select id="pupilLSize" onchange="syncPupil()"><option value="">径 未確認</option><option value="1">1 mm</option><option value="2">2 mm</option><option value="3">3 mm</option><option value="4">4 mm</option><option value="5">5 mm</option></select><select id="pupilLLight" onchange="syncPupil()"><option value="">対光反射 未確認</option><option value="+">＋</option><option value="-">－</option></select></div></div><div id="pupilSelected" class="info">右・左：未確認</div><input id="pupil" type="hidden"></div>
+<div><label>皮膚所見（複数選択）</label><div class="choice-buttons" id="skinChoices"><button type="button" class="choice-pill" onclick="toggleSkin(this)">正常</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">蒼白</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">冷汗</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">湿潤</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">乾燥</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">チアノーゼ</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">紅潮</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">発疹</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">蕁麻疹</button><button type="button" class="choice-pill" onclick="toggleSkin(this)">その他</button></div><div id="skinSelected" class="choice-selected">未選択</div><input id="skinOther" placeholder="その他の皮膚所見" oninput="syncSkin()" style="display:none"><input type="hidden" id="skin"></div><div><label>瞳孔・対光反射</label><div class="pupil-pair"><div><b>右</b><select id="pupilRSize" onchange="syncPupil()"><option value="">径 未確認</option><option value="1">1 mm</option><option value="2">2 mm</option><option value="3">3 mm</option><option value="4">4 mm</option><option value="5">5 mm</option></select><select id="pupilRLight" onchange="syncPupil()"><option value="">対光反射 未確認</option><option value="+">＋</option><option value="-">－</option><option value="±">±（鈍い・判定困難）</option></select></div><div><b>左</b><select id="pupilLSize" onchange="syncPupil()"><option value="">径 未確認</option><option value="1">1 mm</option><option value="2">2 mm</option><option value="3">3 mm</option><option value="4">4 mm</option><option value="5">5 mm</option></select><select id="pupilLLight" onchange="syncPupil()"><option value="">対光反射 未確認</option><option value="+">＋</option><option value="-">－</option><option value="±">±（鈍い・判定困難）</option></select></div></div><div id="pupilSelected" class="info">右・左：未確認</div><input id="pupil" type="hidden"></div>
 </div>
 <button class="primary" onclick="evaluateField()">入力内容から隊長支援を更新</button>
 </div>
-<div class="card"><h3>🔵 隊長へのサポート</h3><div id="captainSupport"></div></div>
+<div class="card"><h3>🔵 隊長へのサポート</h3><div id="captainSupport"></div><div id="a217RequiredInterview" aria-live="polite"></div></div>
 <div class="card"><h3>🔵 隊長 → 🔴救命士｜確認・指示候補</h3><div id="orders"></div></div>
 <div class="card"><h3>現場で実施する観察・処置</h3><div id="sceneActions"></div></div>
 <div class="card"><h3>📘 プロトコール発動・照合</h3><div id="protocol"></div></div>
@@ -217,7 +217,7 @@ body.start-only #start{z-index:30000!important}
 
 <section id="aide207" class="scene"><div class="card"><h2>⑤ 主訴・詳細観察</h2><div class="info" id="aide207Summary">④の観察情報を引き継ぎます。</div>
 <div class="aide207-tabs"><button type="button" class="on" onclick="aide207Tab(0)">主訴・聴取</button><button type="button" onclick="aide207Tab(1)">バイタル</button><button type="button" onclick="aide207Tab(2)">身体所見</button></div>
-<div class="aide207-panel on"><label>主訴（現場で確認した内容）</label><input id="a207Complaint" placeholder="例：突然の胸痛" oninput="aide207Render()"><label>発症時刻・最終健常確認</label><input id="a207Onset" placeholder="例：14:20／最終健常14:00" oninput="a211OnsetManual();aide207Render()"><div id="a211OnsetHint" class="a211-hint">覚知時刻・聴取内容から発症時刻を推定します。推定時刻は要確認です。</div><label>発症経過・随伴症状</label><textarea id="a207Details" rows="3" placeholder="例：冷汗、背部への放散、失神" oninput="aide207Render()"></textarea><label>既往歴（複数入力可）</label><input id="a207History" placeholder="例：心不全、高血圧、糖尿病、狭心症" oninput="aide207Render()"><p class="aide207-note">既往歴から服薬候補を表示します。服薬事実ではありません。</p><div id="a215InlineMedPreview" aria-live="polite" style="margin:8px 0 12px;padding:10px;border:1px solid #477d9c;border-radius:10px;font-size:.92em">既往歴を入力すると、代表的な薬剤名をここに表示します。</div><label>確認できた服用薬（お薬手帳・本人・家族など）</label><input id="a207ConfirmedMeds" placeholder="確認した薬剤名・服用時刻・情報源" oninput="aide207Render()"><label>痛み</label><select id="a207Pain" onchange="aide207Render()"><option value="">未確認</option><option>強い痛み・持続</option><option>軽度・軽快傾向</option><option>痛みなし</option></select></div>
+<div class="aide207-panel on"><label>主訴（現場で確認した内容）</label><input id="a207Complaint" placeholder="例：突然の胸痛" oninput="aide207Render()"><label>発症時刻・最終健常確認</label><input id="a207Onset" placeholder="例：14:20／最終健常14:00" oninput="a211OnsetManual();aide207Render()"><div id="a211OnsetHint" class="a211-hint">覚知時刻・聴取内容から発症時刻を推定します。推定時刻は要確認です。</div><label>最終健常確認時刻（発症時刻とは別）</label><input id="a218LastWell" placeholder="例：13:45／未確認" oninput="a218RefreshOnset()"><div id="a218OnsetDisplay" class="a211-hint" aria-live="polite">発症時刻・最終健常確認は別々に管理します。</div><label>発症経過・随伴症状</label><textarea id="a207Details" rows="3" placeholder="例：冷汗、背部への放散、失神" oninput="aide207Render()"></textarea><label>既往歴（複数入力可）</label><input id="a207History" placeholder="例：心不全、高血圧、糖尿病、狭心症" oninput="aide207Render()"><p class="aide207-note">既往歴から服薬候補を表示します。服薬事実ではありません。</p><div id="a215InlineMedPreview" aria-live="polite" style="margin:8px 0 12px;padding:10px;border:1px solid #477d9c;border-radius:10px;font-size:.92em">既往歴を入力すると、代表的な薬剤名をここに表示します。</div><label>確認できた服用薬（お薬手帳・本人・家族など）</label><input id="a207ConfirmedMeds" placeholder="確認した薬剤名・服用時刻・情報源" oninput="aide207Render()"><label>痛み</label><select id="a207Pain" onchange="aide207Render()"><option value="">未確認</option><option>強い痛み・持続</option><option>軽度・軽快傾向</option><option>痛みなし</option></select></div>
 <div class="aide207-panel"><div class="aide207-grid"><div><label>JCS</label><select id="a207Jcs" onchange="aide207Render();a211CheckConsciousness()"><option value="">未確認</option><option>0</option><option>1</option><option>2</option><option>3</option><option>10</option><option>20</option><option>30</option><option>100</option><option>200</option><option>300</option></select></div><div><label>血圧（mmHg）</label><input id="a207Bp" placeholder="例：90/60" oninput="aide207Render()"></div><div><label>脈拍（回/分）</label><input id="a207Hr" inputmode="numeric" oninput="aide207Render()"></div><div><label>SpO₂（%）</label><input id="a207Spo" inputmode="numeric" oninput="aide207Render()"></div><div><label>呼吸数（回/分）</label><input id="a207Rr" inputmode="numeric" oninput="aide207Render()"></div><div><label>血糖（mg/dL）</label><input id="a207Sugar" inputmode="numeric" oninput="aide207Render()"></div></div><div id="a211JcsGcsAlert" class="conscious-alert" role="status" aria-live="polite" style="display:none"></div><p class="aide207-note">未入力は「未確認」。以前の測定値を自動で正常とみなしません。</p></div>
 <div class="aide207-panel"><label>呼吸困難</label><select id="a207Breath" onchange="aide207Render()"><option value="">未確認</option><option value="yes">あり</option><option value="no">なし</option></select><label>ショック徴候</label><select id="a207Shock" onchange="aide207Render()"><option value="">未確認</option><option value="yes">あり</option><option value="no">なし</option></select><label>心電図所見</label><select id="a207Ecg" onchange="aide207Render()"><option value="">未確認</option><option>明らかな異常なし</option><option>虚血性変化疑い</option><option>不整脈あり</option></select><label>その他の身体所見</label><textarea id="a207Findings" rows="2" oninput="aide207Render()"></textarea></div>
 <div class="a209-panel"><h3>🚁 ドクターヘリ早期検討</h3><div id="a209Detail">支援情報を入力すると、要請検討に必要な確認項目を表示します。</div><div class="a209-small">正式な適応判定ではありません。地域の運用要領・指令室判断を優先します。</div></div><div class="aide207-card"><h3>🔵 AI活動サポート</h3><div id="a207Ai"></div></div>
@@ -242,7 +242,7 @@ body.start-only #start{z-index:30000!important}
 const selectedSkin=new Set();
 function toggleSkin(button){const v=button.textContent.trim();if(v==="正常"){selectedSkin.clear()}else{selectedSkin.delete("正常")}if(selectedSkin.has(v))selectedSkin.delete(v);else selectedSkin.add(v);syncSkin()}
 function syncSkin(){const other=document.getElementById("skinOther");other.style.display=selectedSkin.has("その他")?"block":"none";const vals=[...selectedSkin].filter(x=>x!=="その他");if(selectedSkin.has("その他")&&other.value.trim())vals.push(other.value.trim());document.getElementById("skin").value=vals.join("、");document.getElementById("skinSelected").innerHTML=[...selectedSkin].map(x=>'<span class="selected-pill">'+x+'</span>').join("")||"未選択";document.querySelectorAll("#skinChoices button").forEach(b=>b.classList.toggle("chosen",selectedSkin.has(b.textContent.trim())))}
-function syncPupil(){const get=id=>document.getElementById(id)?.value||"";const side=k=>{const d=get("pupil"+k+"Size"),r=get("pupil"+k+"Light");return (d?d+"mm":"径未確認")+"/反射"+(r||"未確認")};const val="右 "+side("R")+"、左 "+side("L");document.getElementById("pupil").value=val;document.getElementById("pupilSelected").textContent=val}
+function syncPupil(){const get=id=>document.getElementById(id)?.value||"";const side=k=>{const d=get("pupil"+k+"Size"),r=get("pupil"+k+"Light");return (d?d+"mm":"径未確認")+"/反射"+(r||"未確認")};const val="右 "+side("R")+"、左 "+side("L");document.getElementById("pupil").value=val;document.getElementById("pupilSelected").textContent=val;if(typeof updateSupport==="function")updateSupport()}
 function finishTransportReassessment(){recordTransportVitals();buildFinalSummary();setScreenDirect("finalSupport",true)}
 function buildFinalSummary(){const e=document.getElementById("finalClinicalSummary");if(!e)return;const v=typeof vitalSnapshot==="function"?vitalSnapshot("2"):{};const labels={hr:"HR",bp:"血圧",spo2:"SpO₂",rr:"呼吸数",temp:"体温",glucose:"血糖"};const vals=Object.entries(v||{}).filter(([k,x])=>x!==""&&x!=null).map(([k,x])=>`${labels[k]||k}: <b>${x}</b>`).join("　");e.innerHTML=`<div class="warn"><b>⚠️ 最新確認情報</b><br>${vals||"最新バイタルは未入力です。"}<br><span class="muted">未確認を正常扱いせず、状態変化時は再評価してください。</span></div>`}
 
@@ -555,7 +555,7 @@ if(f.resp)extra.push("発症様式、呼吸苦の増悪、喘鳴・呼吸音を�
 if(f.allergy)extra.push("原因候補、皮膚粘膜、呼吸、循環症状を確認");
 if(f.trauma)extra.push("受傷機転、頭頸部、胸腹部、骨盤、出血を確認");
 if(f.burn)extra.push("受傷機転、熱源、接触時間、部位、深度、面積、気道を確認");
-document.getElementById("captainSupport").innerHTML=(extra.length?extra:["現在の情報から、基本聴取を継続。新しい情報で質問を変更します。"]).map(x=>`<div class="info">${x}</div>`).join("")}
+document.getElementById("captainSupport").innerHTML=(extra.length?extra:["現在の情報から、基本聴取を継続。新しい情報で質問を変更します。"]).map(x=>`<div class="info">${x}</div>`).join("");if(typeof window.a217RenderInterview==="function")window.a217RenderInterview()}
 function num(id){let v=parseFloat(document.getElementById(id).value);return isNaN(v)?null:v}
 
 function clinicalContext(){
@@ -965,6 +965,161 @@ window.a212Copy=()=>{let t=el('a212CallText')?.textContent||'';if(navigator.clip
 for(const id of ['a207Complaint','a207Details','a207Findings','a207Onset','a207Jcs','a207Bp','a207Hr','a207Spo','a207Rr','a207Sugar','a207History','a207ConfirmedMeds','supportText','supportExtra','interviewFree','q_history','q_meds','q_allergy','allergy','course','awareness','contact','gcs','jcs','bp','hr','spo2','rr','glucose','a210NitroStatus','a210NitroTime']){el(id)?.addEventListener('input',window.a212Refresh);el(id)?.addEventListener('change',window.a212Refresh);}
 window.addEventListener('DOMContentLoaded',window.a212Refresh);window.a212Refresh();
 const obs=new MutationObserver(()=>{if(el('transport')?.classList.contains('active')||el('transport')?.classList.contains('show'))window.a212Refresh();});if(el('transport'))obs.observe(el('transport'),{attributes:true,attributeFilter:['class']});
+})();
+</script>
+
+<style id="a216-styles">
+.a216-abnormal{color:#b91c1c!important;background:#fff0f0!important;border:2px solid #dc2626!important;font-weight:800!important}
+.a216-invalid{color:#9a3412!important;background:#fff7ed!important;border:2px solid #f97316!important}
+.a216-warning{color:#b91c1c;font-weight:800;font-size:.86rem;margin-top:4px}
+.a216-hint{color:#9a3412;font-size:.82rem;margin-top:4px}
+</style>
+<script id="a216-vital-alerts">
+(function(){
+'use strict';
+// Adult-oriented screening thresholds only, not diagnostic or treatment thresholds.
+const spec={
+hr:{low:50,high:120,min:0,max:300,label:'脈拍'},hr2:{low:50,high:120,min:0,max:300,label:'脈拍'},a207Hr:{low:50,high:120,min:0,max:300,label:'脈拍'},
+spo2:{low:94,high:100,min:0,max:100,label:'SpO₂'},spo22:{low:94,high:100,min:0,max:100,label:'SpO₂'},a207Spo:{low:94,high:100,min:0,max:100,label:'SpO₂'},
+rr:{low:10,high:24,min:0,max:100,label:'呼吸数'},rr2:{low:10,high:24,min:0,max:100,label:'呼吸数'},a207Rr:{low:10,high:24,min:0,max:100,label:'呼吸数'},
+temp:{low:35,high:38,min:25,max:45,label:'体温'},
+glucose:{low:70,high:200,min:0,max:1000,label:'血糖'},a207Sugar:{low:70,high:200,min:0,max:1000,label:'血糖'},
+bpSys:{low:90,high:180,min:0,max:300,label:'収縮期血圧'},bpSys2:{low:90,high:180,min:0,max:300,label:'収縮期血圧'},
+bpDia:{low:40,high:110,min:0,max:200,label:'拡張期血圧'},bpDia2:{low:40,high:110,min:0,max:200,label:'拡張期血圧'}
+};
+function check(el){
+ if(!el||!el.id)return;
+ const id=el.id, rule=spec[id], bp=id==='a207Bp';
+ if(!rule&&!bp)return;
+ const raw=el.value.trim();let abnormal=false,invalid=false,detail='';
+ if(raw){
+  if(bp){
+   const m=raw.match(/^(\d{1,3})\s*\/\s*(\d{1,3})$/);
+   if(!m){invalid=true;detail='血圧は「上/下」で入力してください';}
+   else {const a=+m[1],b=+m[2];invalid=a<=b||a>300||b>200||a===0||b===0;abnormal=!invalid&&(a<90||a>180||b<40||b>110);detail=invalid?'血圧の入力値を確認してください':abnormal?'血圧異常の可能性：再測定・循環評価':'';}
+  }else{
+   const n=Number(raw);invalid=!Number.isFinite(n)||n<rule.min||n>rule.max;
+   abnormal=!invalid&&(n<rule.low||n>rule.high);
+   detail=invalid?'入力値・単位を確認してください':abnormal?rule.label+'：成人の参考範囲外。状態と再測定値を確認':'';
+  }
+ }
+ el.classList.toggle('a216-abnormal',abnormal);el.classList.toggle('a216-invalid',invalid);
+ el.setAttribute('aria-invalid',String(invalid||abnormal));
+ let msg=document.getElementById('a216-msg-'+id);
+ if((abnormal||invalid)&&!msg){msg=document.createElement('div');msg.id='a216-msg-'+id;el.insertAdjacentElement('afterend',msg)}
+ if(msg){msg.className=invalid?'a216-hint':'a216-warning';msg.textContent=detail;msg.style.display=(abnormal||invalid)?'block':'none'}
+ }
+ function scan(){Object.keys(spec).concat('a207Bp').forEach(id=>check(document.getElementById(id)))}
+ document.addEventListener('input',e=>check(e.target));document.addEventListener('change',e=>check(e.target));
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan);else scan();
+})();
+</script>
+<script>
+/* Ver.20.18: structured, non-diagnostic interview prompts. */
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const get=id=>$(id)?.value?.trim()||'';
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function collect(){return [get('supportText'),get('interviewFree'),get('a207Complaint'),get('a207Details'),get('a207History'),get('a207Findings'),get('q_history'),get('q_meds')].join(' ')}
+function render(){
+ const box=$('a217RequiredInterview');if(!box)return;
+ const t=collect(), questions=[];
+ const add=(id,label,reason,condition,answered=false)=>{if(condition&&!answered&&!questions.some(x=>x.id===id))questions.push({id,label,reason})};
+ const chest=/胸痛|胸部痛|狭心症|心筋梗塞|心不全|冠動脈|心疾患|心房細動|不整脈/.test(t);
+ const neuro=/麻痺|ろれつ|構音|失語|意識障害|脳梗塞|脳卒中|脳出血|けいれん|痙攣|反応なし/.test(t);
+ const trauma=/転倒|転落|交通事故|外傷|打撲|頭部打撲/.test(t);
+ const resp=/呼吸困難|息苦し|喘鳴|喘息|COPD/.test(t);
+ const sugar=/糖尿病|低血糖|意識障害|けいれん/.test(t);
+ const pupilR=get('pupilRLight'),pupilL=get('pupilLLight');
+ const pupilAbnormal=['-','±'].includes(pupilR)||['-','±'].includes(pupilL)||(pupilR&&pupilL&&pupilR!==pupilL);
+ const onsetKnown=Boolean(get('a207Onset'))&&!($('a207Onset')?.dataset.estimated==='true');
+ add('onset','発症時刻・最終健常確認時刻を確認','治療・搬送判断に必要',neuro||chest,!(!onsetKnown));
+ add('chest','痛みの性状・放散・発症様式、失神の有無','胸痛の危険病態の鑑別',chest,/放散|締め付け|圧迫感|背部痛/.test(t));
+ add('nitro','ニトロ製剤の処方・携帯・本日使用時刻と回数','心疾患・胸痛時の服薬確認',chest,Boolean(get('a210NitroStatus')));
+ add('neuro','顔面・上肢・言語の変化と左右差','脳卒中を含む神経症状の評価',neuro,/CPSS|顔面麻痺|上肢麻痺|左右差/.test(t));
+ add('resp','呼吸困難の開始・増悪、喘鳴・吸入薬の使用','呼吸器病態の評価',resp,/吸入薬|喘鳴|増悪/.test(t));
+ add('trauma','受傷機転、抗凝固薬、意識消失の有無','外傷・出血リスクの評価',trauma,/抗凝固薬|ワルファリン|アピキサバン/.test(t));
+ add('diabetes','糖尿病薬・インスリン・最終食事・低血糖歴','低血糖を含む鑑別',sugar,/最終食事|インスリン使用|低血糖歴/.test(t));
+ add('pupil','瞳孔左右差・対光反射を再確認し、意識変化・頭痛・外傷歴を聴取','瞳孔所見の異常または判定困難',pupilAbnormal);
+ const severe=questions.some(x=>x.id==='pupil');
+ box.innerHTML='<div class="'+(severe?'danger':'info')+'" style="margin-top:10px"><b>⭐ 追加必須聴取（現在の情報からの確認候補）</b><div style="font-size:.86em;margin:4px 0">未記録は未実施と断定しません。確認済みの場合は記録を更新してください。</div>'+(questions.length?questions.map(x=>'<div style="padding:6px 0;border-top:1px solid #94a3b855"><b>□ '+esc(x.label)+'</b><div style="font-size:.84em">理由：'+esc(x.reason)+'</div></div>').join(''):'現時点で追加の病態別聴取候補はありません。基本聴取は継続してください。')+'</div>';
+}
+window.a217RenderInterview=render;
+document.addEventListener('input',e=>{if(e.target.closest('#field,#detail,#support,#aide207,#brief'))render()});
+document.addEventListener('change',()=>render());
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render);else render();
+})();
+</script>
+<script>
+/* Ver.20.18: independent onset estimate and arrival-only GPS. No diagnosis or treatment decisions. */
+(function(){
+ const $=id=>document.getElementById(id);
+ const norm=s=>String(s||'').normalize('NFKC');
+ const pad=n=>String(n).padStart(2,'0');
+ function baseMinutes(v){let m=/^(\d{1,2}):(\d{2})$/.exec(v||'');return m&&+m[1]<24&&+m[2]<60?+m[1]*60+(+m[2]):null}
+ function duration(t){
+  const a=norm(t).match(/(?:約|およそ|大体|だいたい)?\s*(\d{1,2})\s*時間\s*(\d{1,2})\s*分\s*前/);
+  if(a)return (+a[1])*60+(+a[2]);
+  const b=norm(t).match(/(?:約|およそ|大体|だいたい)?\s*(\d{1,2})\s*時間\s*前/);
+  if(b)return (+b[1])*60;
+  const c=norm(t).match(/(?:約|およそ|大体|だいたい)?\s*(\d{1,3})\s*分\s*前/);
+  return c?+c[1]:null;
+ }
+ function parseCandidate(text){
+  const t=norm(text);
+  // Explicit absolute onset time, not last-known-well time.
+  const abs=t.match(/(?:発症|症状が出た|痛み始めた|倒れた)(?:時刻|は|が|したのは|した時刻)?[^。\n]{0,14}?(\d{1,2})\s*時\s*(\d{1,2})?\s*分?(?:頃|ごろ|くらい)?/);
+  if(abs&&+abs[1]<24&&(!abs[2]||+abs[2]<60))return {time:pad(+abs[1])+':'+pad(+(abs[2]||0)),method:'聴取した時刻',approx:/約|頃|ごろ|くらい/.test(abs[0])};
+  // Relative time must explicitly refer to dispatch/call; avoid ambiguous '30 minutes ago'.
+  const ref=t.match(/(?:覚知|入電|通報|指令)(?:時刻|の時点|から|より|の)?[^。\n]{0,30}?(?:約|およそ|大体|だいたい)?\s*(?:\d+\s*時間\s*)?(?:\d+\s*分\s*)?前/);
+  const reverse=t.match(/(?:約|およそ|大体|だいたい)?\s*(?:\d+\s*時間\s*)?(?:\d+\s*分\s*)?前[^。\n]{0,22}?(?:覚知|入電|通報|指令)/);
+  const match=ref||reverse;
+  const d=match?duration(match[0]):null;
+  const base=baseMinutes($('awareness')?.value);
+  if(d===null||d<=0||d>1440||base===null)return null;
+  const result=(base-d+1440)%1440;
+  return {time:pad(Math.floor(result/60))+':'+pad(result%60)+(base-d<0?'（前日）':''),method:'覚知時刻から'+d+'分前',approx:true};
+ }
+ window.a218RefreshOnset=function(){
+  const input=$('a207Onset'),hint=$('a211OnsetHint'),display=$('a218OnsetDisplay');
+  if(!input||!hint)return;
+  const sources=[['現場聴取',$('interviewFree')?.value],['発症経過',$('a207Details')?.value],['支援情報',$('supportText')?.value],['主訴',$('a207Complaint')?.value]];
+  const found=sources.map(([name,value])=>({name,c:parseCandidate(value)})).find(x=>x.c);
+  if(input.dataset.userEdited!=='true'&&(!input.value.trim()||input.dataset.estimated==='true')){
+   if(found){input.value=found.c.time;input.dataset.estimated='true';input.dataset.lastEstimate=input.value;input.dataset.onsetSource=found.name;hint.textContent='⚠️ 約'+found.c.time+'（'+found.c.method+'／'+found.name+'）推定・要確認';hint.classList.add('estimated');}
+   else if(input.dataset.estimated==='true'){input.value='';input.dataset.estimated='false';hint.textContent='推定根拠がなくなりました。発症時刻は未確認です。';}
+  }
+  if(display)display.textContent='発症：'+(input.value||'未確認')+(input.dataset.estimated==='true'?'（推定・要確認）':'')+' ／ 最終健常：'+($('a218LastWell')?.value.trim()||'未確認')+'（別途確認）';
+ };
+ // Override the old estimator so that uncertain times are not inferred from an unspecified reference.
+ window.a211SuggestOnset=window.a218RefreshOnset;
+ let pendingGPS=null;
+ window.a218GPS=function(){
+  const status=$('a218GpsStatus');if(!status)return;
+  if(!window.isSecureContext){status.textContent='⚠️ HTTPS接続が必要です。';return;}
+  if(!navigator.geolocation){status.textContent='⚠️ この端末は位置情報に対応していません。';return;}
+  status.textContent='📍 位置情報の許可・取得を待っています…';
+  navigator.geolocation.getCurrentPosition(pos=>{
+   const lat=pos.coords.latitude,lon=pos.coords.longitude,acc=Math.round(pos.coords.accuracy);
+   pendingGPS={lat,lon,acc,at:new Date().toISOString()};
+   $('a218SceneLocation').value=lat.toFixed(6)+', '+lon.toFixed(6);
+   status.textContent='✓ GPS取得（精度約'+acc+'m）。指令住所と照合し「現場位置として確定」を押してください。';
+  },err=>{status.textContent='⚠️ GPS取得不可（'+(err.code===1?'許可が必要':err.code===2?'位置情報を特定できません':'タイムアウト')+'）。住所を手入力できます。';},{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+ };
+ window.a218ConfirmLocation=function(){
+  const v=$('a218SceneLocation')?.value.trim();if(!v){$('a218LocationConfirmed').textContent='⚠️ 住所またはGPS座標を入力してください。';return;}
+  const gpsMatch=pendingGPS&&v===pendingGPS.lat.toFixed(6)+', '+pendingGPS.lon.toFixed(6);
+  const record={value:v,source:gpsMatch?'gps_confirmed':'manual_confirmed',timestamp:new Date().toISOString(),accuracy:gpsMatch?pendingGPS.acc:null};
+  window.a218ConfirmedScene=record;
+  $('a218LocationConfirmed').textContent='✓ 現場位置確定：'+v+(gpsMatch?'（GPS精度約'+pendingGPS.acc+'m）':'（手動確認）');
+  const origin=$('h205Origin');if(origin)origin.value=v;
+  // Keep the dispatch address untouched; the transport origin is updated separately.
+ };
+ document.addEventListener('DOMContentLoaded',()=>{
+  ['awareness','interviewFree','supportText','a207Details','a207Complaint'].forEach(id=>$(id)?.addEventListener('input',window.a218RefreshOnset));
+  $('a207Onset')?.addEventListener('input',()=>setTimeout(window.a218RefreshOnset,0));
+  window.a218RefreshOnset();
+ });
 })();
 </script>
 </body></html>
