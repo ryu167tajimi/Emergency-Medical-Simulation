@@ -153,7 +153,7 @@ body.start-only #start{z-index:30000!important}
 .a209-panel{border:1px solid #3e79a3;border-radius:12px;padding:12px;margin:12px 0;background:rgba(18,85,130,.09)}.a209-panel h3{margin:4px 0 9px}.a209-panel label{display:block;margin:7px 0 3px}.a209-panel input,.a209-panel select{width:100%;max-width:100%;box-sizing:border-box;padding:9px}.a209-hosp{padding:10px;border:1px solid #8198a8;border-radius:10px;margin:9px 0}.a209-small{font-size:12px;opacity:.85;line-height:1.5}.a209-warn{border-left:4px solid #d77d39;padding:8px;margin:7px 0;background:rgba(225,135,42,.1)}.a209-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.a209-actions button{flex:1;min-width:130px}
 </style><style>.conscious-alert{background:#fee2e2!important;color:#991b1b!important;border:2px solid #dc2626!important;border-radius:10px;padding:12px;font-weight:800;margin-top:8px}.a211-hint{font-size:12px;color:#475569;margin-top:5px}.a211-hint.estimated{background:#fff7ed;border-left:3px solid #f59e0b;padding:7px;color:#92400e}</style><style id="aide-version-corner-style">header{padding-right:110px!important}.aide-version-corner{position:absolute;right:12px;top:12px;display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:999px;border:1px solid rgba(115,206,255,.7);background:rgba(16,84,138,.85);color:#fff;font-size:12px;font-weight:800;white-space:nowrap;letter-spacing:.2px;box-shadow:0 1px 8px #0003}@media(max-width:370px){header b{font-size:16px}.aide-version-corner{right:8px;top:10px;font-size:11px;padding:4px 6px}}</style></head>
 <body class="start-only"><button id="aideBack" class="aide-back" onclick="goBackScreen()">← 戻る</button>
-<header><b>TAJIMI EMS AIDE</b><div class="sub">詳細入力・活動フロー版</div><span class="aide-version-corner" aria-label="アプリバージョン">Ver.20.18</span></header>
+<header><b>TAJIMI EMS AIDE</b><div class="sub">詳細入力・活動フロー版</div><span class="aide-version-corner" aria-label="アプリバージョン">Ver.20.19</span></header>
 <div class="wrap">
 <section id="start" class="screen active"><div class="card start-card-only">
 <h1 class="start-main-heading">救急活動支援</h1>
@@ -166,8 +166,7 @@ body.start-only #start{z-index:30000!important}
 <div class="timeRow"><input id="awareness" type="time"><button class="now" onclick="now('awareness')">現在時刻</button></div><label>覚知時刻</label>
 <div class="timeRow"><input id="departure" type="time"><button class="now" onclick="now('departure')">現在時刻</button></div><label>出場時刻</label>
 <label>場所</label>
-<div class="timeRow"><input id="location" placeholder="出動場所"><span class="muted" style="font-size:.85em">指令住所（GPSは現場到着後）</span></div>
-<div id="gpsStatus" class="muted">現場到着後にGPSで確認できます。指令住所は保持します。</div>
+<input id="location" type="hidden" value=""><div id="gpsStatus" hidden aria-hidden="true"></div>
 <div id="crewRows"></div>
 <div class="muted" style="margin-top:8px">救命士資格表示：救＝救急救命士／ビ＝ビデオ喉頭鏡／気＝気管挿管／薬＝薬剤／新＝新処置</div>
 <button class="primary" onclick="saveCrew()">隊員情報を確定 →</button></div></section>
@@ -1015,7 +1014,7 @@ function check(el){
 })();
 </script>
 <script>
-/* Ver.20.18: structured, non-diagnostic interview prompts. */
+/* Ver.20.19: structured, non-diagnostic interview prompts. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
 const get=id=>$(id)?.value?.trim()||'';
@@ -1051,7 +1050,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 })();
 </script>
 <script>
-/* Ver.20.18: independent onset estimate and arrival-only GPS. No diagnosis or treatment decisions. */
+/* Ver.20.19: independent onset estimate and arrival-only GPS. No diagnosis or treatment decisions. */
 (function(){
  const $=id=>document.getElementById(id);
  const norm=s=>String(s||'').normalize('NFKC');
